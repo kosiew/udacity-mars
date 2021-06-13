@@ -4,12 +4,52 @@ let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
+const d = (function () {
+    const debug = true;
+
+    function log(...message) {
+        if (debug) {
+            const msg = message.join(', ');
+            console.log(msg);
+        }
+    }
+
+    function group(groupName = 'default') {
+        if (debug) {
+            console.group(groupName);
+        }
+    }
+
+    function groupEnd() {
+        if (debug) {
+            console.groupEnd();
+        }
+    }
+
+    function table(obj) {
+        if (debug) {
+            console.table(obj);
+        }
+    }
+        
+    return {
+        log: log,
+        group: group,
+        groupEnd: groupEnd,
+        table: table
+
+    };
+})();
+
+
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
+    d.group('updateStore');
     store = Object.assign(store, newState)
     render(root, store)
+    d.groupEnd();
 }
 
 const render = async (root, state) => {
@@ -20,6 +60,10 @@ const render = async (root, state) => {
 // create content
 const App = (state) => {
     let { rovers, apod } = state
+
+    d.group('App');
+    d.table(apod);
+    d.groupEnd();
 
     return `
         <header></header>
@@ -65,27 +109,36 @@ const Greeting = (name) => {
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
-
+    d.group('ImageOfTheDay');
+    d.table(apod);
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
     const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
+    d.log(photodate.getDate(), today.getDate());
 
-    console.log(photodate.getDate() === today.getDate());
+    d.log(photodate.getDate() === today.getDate());
     if (!apod || apod.date === today.getDate() ) {
         getImageOfTheDay(store)
     }
+    d.group('apod.image');
+    d.table(apod.image);
+    const mediaType = apod.image.media_type;
+    const url = apod.image.url;
+    d.log(`url ${url}`);
+
+    d.groupEnd();
+    d.groupEnd();
 
     // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
+    if (apod.image.media_type === "video") {
         return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
+            <p>See today's featured video <a href="${url}">here</a></p>
+            <p>${apod.image.title}</p>
+            <p>${apod.image.explanation}</p>
         `)
     } else {
         return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
+            <img src="${url}" height="350px" width="100%" />
             <p>${apod.image.explanation}</p>
         `)
     }
@@ -101,5 +154,4 @@ const getImageOfTheDay = (state) => {
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
 
-    return data
 }
