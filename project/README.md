@@ -78,6 +78,124 @@ the "Mars Rover Photos" section at https://api.nasa.gov/
 sample api url
 https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2021-6-3&api_key=eRafRpcw5LGMust4pIe03eg1sRZMfi1eTw9kAIC1
 
+{
+    "photos": [
+        {
+            "camera": {
+                "full_name": "Front Hazard Avoidance Camera",
+                "id": 20,
+                "name": "FHAZ",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840263,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/03135/opgs/edr/fcam/FLB_675798054EDR_F0880366FHAZ00302M_.JPG",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        },
+        {
+            "camera": {
+                "full_name": "Front Hazard Avoidance Camera",
+                "id": 20,
+                "name": "FHAZ",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840264,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/03135/opgs/edr/fcam/FRB_675798054EDR_F0880366FHAZ00302M_.JPG",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        },
+        {
+            "camera": {
+                "full_name": "Rear Hazard Avoidance Camera",
+                "id": 21,
+                "name": "RHAZ",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840265,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/03135/opgs/edr/rcam/RLB_675798088EDR_F0880366RHAZ00311M_.JPG",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        },
+        {
+            "camera": {
+                "full_name": "Rear Hazard Avoidance Camera",
+                "id": 21,
+                "name": "RHAZ",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840266,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/03135/opgs/edr/rcam/RRB_675798088EDR_F0880366RHAZ00311M_.JPG",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        },
+        {
+            "camera": {
+                "full_name": "Mars Descent Imager",
+                "id": 25,
+                "name": "MARDI",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840466,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/msss/03135/mrdi/3135MD0011670000202553E01_DXXX.jpg",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        },
+        {
+            "camera": {
+                "full_name": "Mars Descent Imager",
+                "id": 25,
+                "name": "MARDI",
+                "rover_id": 5
+            },
+            "earth_date": "2021-06-01",
+            "id": 840467,
+            "img_src": "https://mars.nasa.gov/msl-raw-images/msss/03135/mrdi/3135MD0011670000202553I01_DXXX.jpg",
+            "rover": {
+                "id": 5,
+                "landing_date": "2012-08-06",
+                "launch_date": "2011-11-26",
+                "name": "Curiosity",
+                "status": "active"
+            },
+            "sol": 3135
+        }
+    ]
+}
 
 
 
