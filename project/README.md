@@ -70,3 +70,15 @@ Create an image gallery slider, put a full page background image, code some fall
 
 
 
+### Research notes
+
+NASA's Curiosity, Opportunity, and Spirit rovers on Mars
+the "Mars Rover Photos" section at https://api.nasa.gov/
+
+sample api url
+https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2021-6-3&api_key=eRafRpcw5LGMust4pIe03eg1sRZMfi1eTw9kAIC1
+
+
+
+
+
