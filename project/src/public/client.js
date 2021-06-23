@@ -4,8 +4,9 @@ let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
+// for debugging
 const d = (function () {
-    const debug = false;
+    const debug = true;
 
     function log(message, level=0) {
         if (debug) {
@@ -27,7 +28,7 @@ const d = (function () {
             }
             
             const _styles = styles.join(';');
-            console.log(`%c message`, _styles);        }
+            console.log(`%c ${message}`, _styles);        }
     }
 
     function group(groupName = 'default') {
@@ -70,6 +71,7 @@ const updateStore = (store, newState) => {
 }
 
 const render = async (root, state) => {
+    d.log('render');
     root.innerHTML = App(state)
 }
 
@@ -84,40 +86,22 @@ const App = (state) => {
 
     return `
         <header>
-            <h2>Mars Rovers Explorer</h2> 
+            <h1>Mars Rovers Explorer</h1> 
         </header>
         <main>
             ${Greeting(store.user.name)}
             <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
                 ${ImageOfTheDay(apod)}
             </section>
         </main>
-        <form id="dino-compare">
+        <form id="mars">
             <div class="form-container">
-                <p>Name:</p>
-                <input id="name" class="form-field__full" type="name" name="name">
-                <p>Height</p>
-                <label>Feet: <input id="feet" class="form-field__short" type="number" name="feet"></label>
-                <label>inches: <input id="inches" class="form-field__short" type="number" name="inches"></label>
-                <p>Weight:</p>
-                <label><input id="weight" class="form-field__full" type="number" name="weight">lbs</label>
-                <p>Diet:</p>
-                <select id="diet" class="form-field__full" name="diet">
-                    <option>Herbavor</option>
-                    <option>Omnivor</option>
-                    <option>Carnivor</option>
+                <p>Date: <input type="date" id="date"></p>
+                <p>Choose a rover:</p>
+                <select id="rover" class="form-field__full" name="rover">
+                    ${RoverOptions()}
                 </select>
-                <div id="btn">Compare Me!</div>
+                <div id="btn">Fetch photos</div>
             </div>
         </form>
     <!-- .grid to attach tiles to -->
@@ -128,11 +112,34 @@ const App = (state) => {
 }
 
 // listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
-    render(root, store)
+window.addEventListener('load', async () => {
+    d.log('load - render');
+    await render(root, store);
+    const btn = document.getElementById('btn');
+    d.log('binding btn event');
+    if (btn != null) {
+        btn.addEventListener('click', (function() {
+            return function() {
+                const formData = new FormData(document.getElementById('mars'));
+                const h = {}
+                for (const pair of formData.entries()) {
+                    h[pair[0]] = pair[1];
+                }
+                d.log(h.date, d.rover);
+            };
+        })());
+            
+    }
+
 })
 
 // ------------------------------------------------------  COMPONENTS
+
+const RoverOptions = () => {
+    const rovers = store.rovers;
+    const options = rovers.map((rover) => `<option>${rover}</option>`);
+    return options.join('');
+}
 
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const Greeting = (name) => {
@@ -195,3 +202,4 @@ const getImageOfTheDay = (state) => {
         .then(apod => updateStore(store, { apod }))
 
 }
+
