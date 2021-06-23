@@ -5,13 +5,29 @@ let store = {
 }
 
 const d = (function () {
-    const debug = true;
+    const debug = false;
 
-    function log(...message) {
+    function log(message, level=0) {
         if (debug) {
-            const msg = message.join(', ');
-            console.log(msg);
-        }
+            const styles = [
+                'border: 1px solid #3E0E02'
+                , 'color: white'
+                , 'display: block'
+                , 'text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3)'
+                , 'box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 5px 3px -5px rgba(0, 0, 0, 0.5), 0 -13px 5px -10px rgba(255, 255, 255, 0.4) inset'
+                , 'line-height: 20px'
+                , 'text-align: center'
+                , 'font-weight: bold'
+            ];
+    
+            if (level==0) {
+                styles.push('background: linear-gradient(#060dd3, #040647)');
+            } else {
+                styles.push('background: linear-gradient(#D33106, #571402)');
+            }
+            
+            const _styles = styles.join(';');
+            console.log(`%c message`, _styles);        }
     }
 
     function group(groupName = 'default') {
@@ -42,6 +58,7 @@ const d = (function () {
 })();
 
 
+
 // add our markup to the page
 const root = document.getElementById('root')
 
@@ -66,7 +83,9 @@ const App = (state) => {
     d.groupEnd();
 
     return `
-        <header></header>
+        <header>
+            <h2>Mars Rovers Explorer</h2> 
+        </header>
         <main>
             ${Greeting(store.user.name)}
             <section>
@@ -83,6 +102,27 @@ const App = (state) => {
                 ${ImageOfTheDay(apod)}
             </section>
         </main>
+        <form id="dino-compare">
+            <div class="form-container">
+                <p>Name:</p>
+                <input id="name" class="form-field__full" type="name" name="name">
+                <p>Height</p>
+                <label>Feet: <input id="feet" class="form-field__short" type="number" name="feet"></label>
+                <label>inches: <input id="inches" class="form-field__short" type="number" name="inches"></label>
+                <p>Weight:</p>
+                <label><input id="weight" class="form-field__full" type="number" name="weight">lbs</label>
+                <p>Diet:</p>
+                <select id="diet" class="form-field__full" name="diet">
+                    <option>Herbavor</option>
+                    <option>Omnivor</option>
+                    <option>Carnivor</option>
+                </select>
+                <div id="btn">Compare Me!</div>
+            </div>
+        </form>
+    <!-- .grid to attach tiles to -->
+    <main id="grid"></main>
+
         <footer></footer>
     `
 }
