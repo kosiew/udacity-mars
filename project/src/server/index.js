@@ -25,4 +25,18 @@ app.get('/apod', async (req, res) => {
     }
 })
 
+app.get('/rover', async (req, res) => {
+    try {
+        const rover = req.query.rover;
+        const date = req.query.date;
+        const url = https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}'
+        const image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
+            .then(res => res.json());
+        res.send({ image })
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
+
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
