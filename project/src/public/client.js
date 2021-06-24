@@ -310,7 +310,7 @@ const getImageOfTheDay = (state) => {
 const getRoverImages = (state) => {
     d.group('getRoverImages');
     const { rover, date } = state;
-    fetch(`http://localhost:3000/rover?rover=${store.rover}&date=${store.date}`)
+    fetch(`http://localhost:3000/images?rover=${store.rover}&date=${store.date}`)
         .then(res => res.json())
         .then( json => {
             const {photos} = json;

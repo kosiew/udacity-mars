@@ -26,7 +26,7 @@ app.get('/apod', async (req, res) => {
     }
 })
 
-app.get('/rover', async (req, res) => {
+app.get('/images', async (req, res) => {
     try {
         console.log('fetching rover');
         const rover = req.query.rover;
