@@ -74,6 +74,15 @@ const updateStore = (store, newState) => {
     d.groupEnd();
 }
 
+function updateHOF(store) {
+    return function(newState) {
+        updateStore(store, newState);
+    }
+}
+
+const updateStoreHOF = updateHOF(store);
+
+
 const render = async (root, state) => {
     d.log('render');
     root.innerHTML = App(state)
@@ -137,7 +146,7 @@ function getFormData() {
         data[pair[0]] = pair[1];
     }
     d.table(data);
-    updateStore(store, data);
+    updateStoreHOF(data);
     getRoverImages(store);
     d.groupEnd();
 }
@@ -152,9 +161,10 @@ function padZero(s, length) {
     return (`0` + s).slice(-length);
 }
 
+
 function selectRover(rover) {
     d.group('selectRover');
-    updateStore(store, {rover: rover});
+    updateStoreHOF({rover: rover});
     getRoverImages(store);
     getRoverManifest(store);
     d.groupEnd();
@@ -319,7 +329,7 @@ const getImageOfTheDay = (state) => {
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(apod => updateStoreHOF({ apod }))
 
 }
 
@@ -335,7 +345,7 @@ const getRoverManifest = (state) => {
                 if (photo_manifest) {
                     d.log(`retrieved manifest for ${photo_manifest.name}`);
                     const manifest = Immutable.Map(photo_manifest);
-                    updateStore(store, {manifest: manifest});
+                    updateStoreHOF( {manifest: manifest});
                 }
             });
     }
@@ -353,7 +363,7 @@ const getRoverImages = (state) => {
             if (photos) {
                 d.log(`there are ${photos.length} photos`);
                 const _photos = Immutable.List(photos);
-                updateStore(store, {images: _photos});
+                updateStoreHOF( {images: _photos});
             }
         });
     d.groupEnd();

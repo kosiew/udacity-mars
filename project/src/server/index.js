@@ -14,11 +14,24 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 
 // your API calls
 
+function apiHOF(apiKey) {
+    const apiKeyString = `api_key=${apiKey}`;
+    return function(url) {
+        if (url.includes('?')) {
+            return `${url}&${apiKeyString}`;
+        }
+        return `${url}?${apiKeyString}`;
+    }
+}
+
+const urlHOF = apiHOF(process.env.API_KEY);
+
 // example API call
 app.get('/apod', async (req, res) => {
     try {
         console.log('fetching apod');
-        const image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
+        const url = urlHOF(`https://api.nasa.gov/planetary/apod`);
+        const image = await fetch(url)
             .then(res => res.json());
         res.send({ image });
     } catch (err) {
@@ -33,7 +46,7 @@ app.get('/images', async (req, res) => {
         const date = req.query.date;
         console.log(`rover = ${rover} date = ${date}`);
         if (rover && date) {
-            const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}`;
+            const url = urlHOF(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}`);
             console.log(`url = ${url}`);
             const result = await fetch(url)
                 .then(res => res.json());
@@ -60,7 +73,7 @@ app.get('/rover', async (req, res) => {
         console.log('fetching rover');
         const rover = req.query.rover;
         console.log(`rover = ${rover}`);
-        const url = `https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${process.env.API_KEY}`;
+        const url = urlHOF(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}`);
         console.log(`url = ${url}`);
         const result = await fetch(url)
             .then(res => res.json());
