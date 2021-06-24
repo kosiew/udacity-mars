@@ -17,9 +17,10 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 // example API call
 app.get('/apod', async (req, res) => {
     try {
+        console.log('fetching apod');
         const image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
             .then(res => res.json());
-        res.send({ image })
+        res.send({ image });
     } catch (err) {
         console.log('error:', err);
     }
@@ -30,10 +31,17 @@ app.get('/rover', async (req, res) => {
         console.log('fetching rover');
         const rover = req.query.rover;
         const date = req.query.date;
+        console.log(`rover = ${rover} date = ${date}`);
         const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}`;
-        const image = await fetch(url)
+        console.log(`url = ${url}`);
+        const photos = await fetch(url)
             .then(res => res.json());
-        res.send({ image })
+        console.log('sending res for rover');    
+        console.group('rover');
+        console.table(photos);
+        console.groupEnd();
+
+        res.send(photos);
     } catch (err) {
         console.log('error:', err);
     }

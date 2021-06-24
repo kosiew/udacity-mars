@@ -61,12 +61,12 @@ const d = (function () {
 })();
 
 
-
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateStore = (store, newState) => {
     d.group('updateStore');
+    d.table(newState);
     store = Object.assign(store, newState)
     render(root, store)
     d.groupEnd();
@@ -96,16 +96,12 @@ const App = (state) => {
                 ${ImageOfTheDay(apod)}
             </section>
         </main>
+        ${RoverTabs()}
         <form id="mars">
             <div class="form-container">
                 <p>Date: 
                   ${SelectDate()}
                 </p>
-                <p>Choose a rover:</p>
-                <select id="rover" class="form-field__full" name="rover">
-                    ${RoverOptions()}
-                </select>
-                <div id="btn" onclick="getFormData()">Fetch photos</div>
             </div>
         </form>
         <section>
@@ -132,9 +128,9 @@ function getFormData() {
         data[pair[0]] = pair[1];
     }
     d.table(data);
-    d.groupEnd();
     updateStore(store, data);
     getRoverImages(store);
+    d.groupEnd();
 }
 
 // listening for load event because page should load before any JS is called
@@ -146,10 +142,17 @@ window.addEventListener('load', () => {
 function padZero(s, length) {
     return (`0` + s).slice(-length);
 }
+
+function selectRover(rover) {
+    d.group('selectRover');
+    updateStore(store, {rover: rover});
+    getRoverImages(store);
+    d.groupEnd();
+}
 // ------------------------------------------------------  COMPONENTS
 const SelectDate = () => {
     const defaultDate = store.date ? store.date : new Date().toISOString().split('T')[0];
-    return `<input type="date" name='date' id="date" value="${defaultDate}"></input>`;
+    return `<input type="date" name='date' id="date" value="${defaultDate}" onchange="getFormData()"></input>`;
 }
 
 const SelectedDate = () => {
@@ -162,6 +165,16 @@ const SelectedDate = () => {
         return `<h1>${year} ${month} ${day}</h1>`        
     }
     return '';
+}
+
+const RoverTabs = () => {
+    const rovers = store.rovers;
+    const selectedRover = store.rover;
+    const buttons = rovers.map((rover) => {
+        const active = rover == selectRover ? 'active' : '';
+        return `<button class="tabllinks ${active}" onclick="selectRover('${rover}')">${rover}</button>`
+    });
+    return buttons.join(' '); 
 }
 
 const Rover = () => {
@@ -249,7 +262,7 @@ const ImageOfTheDay = (apod) => {
 
 // Example API call
 const getImageOfTheDay = (state) => {
-    let { apod } = state
+    const { apod } = state
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
@@ -258,8 +271,9 @@ const getImageOfTheDay = (state) => {
 }
 
 const getRoverImages = (state) => {
+    d.log('getRoverImages');
     const { rover, date } = state;
-    fetch(`https://localhost:3000/rover?rover=${store.rover}&date=${store.date}`)
+    fetch(`http://localhost:3000/rover?rover=${store.rover}&date=${store.date}`)
         .then(res => res.json())
         .then( images => updateStore(store, { images }));
 }
