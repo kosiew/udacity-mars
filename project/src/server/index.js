@@ -28,26 +28,52 @@ app.get('/apod', async (req, res) => {
 
 app.get('/images', async (req, res) => {
     try {
-        console.log('fetching rover');
+        console.log('fetching rover images');
         const rover = req.query.rover;
         const date = req.query.date;
         console.log(`rover = ${rover} date = ${date}`);
-        const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}`;
-        console.log(`url = ${url}`);
-        const result = await fetch(url)
-            .then(res => res.json());
-        console.log('sending res for rover');    
-        console.group('rover');
-        const { photos } = result;
+        if (rover && date) {
+            const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}`;
+            console.log(`url = ${url}`);
+            const result = await fetch(url)
+                .then(res => res.json());
+            console.log('sending res for images');    
+            console.group('images');
+            const { photos } = result;
+    
+            console.log( `there are ${photos.length} photos` );
+            console.groupEnd();
+    
+            res.send(result);            
+        } else {
+            console.log('incomplete parameters -> not responding')
+        }
 
-        console.log( `there are ${photos.length} photos` );
-        console.groupEnd();
 
-        res.send(result);
     } catch (err) {
         console.log('error:', err);
     }
 })
 
+app.get('/rover', async (req, res) => {
+    try {
+        console.log('fetching rover');
+        const rover = req.query.rover;
+        console.log(`rover = ${rover}`);
+        const url = `https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${process.env.API_KEY}`;
+        console.log(`url = ${url}`);
+        const result = await fetch(url)
+            .then(res => res.json());
+        console.log('sending res for rover');    
+        console.group('rover');
+        const { photo_manifest } = result;
+
+        console.log(`name: ${photo_manifest.name} status: ${photo_manifest.status} total photos: ${photo_manifest.total_photos}`);
+        console.groupEnd();
+        res.send(result);
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

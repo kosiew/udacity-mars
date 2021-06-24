@@ -3,6 +3,7 @@ let store = {
     apod: '',
     date: false,
     rover: false,
+    manifest: false,
     images: [],
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -81,7 +82,7 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    const { rovers, apod, images, rover, date } = state
+    const { rovers, apod, images, rover, date, manifest } = state
 
     d.group('App');
     
@@ -114,6 +115,7 @@ const App = (state) => {
         </form>
         <section>
             ${Rover(rover, date)}
+            ${Manifest(manifest)}
         </section>
 
     <!-- .grid to attach tiles to -->
@@ -154,6 +156,7 @@ function selectRover(rover) {
     d.group('selectRover');
     updateStore(store, {rover: rover});
     getRoverImages(store);
+    getRoverManifest(store);
     d.groupEnd();
 }
 // ------------------------------------------------------  COMPONENTS
@@ -218,6 +221,19 @@ const RoverTabs = (rovers) => {
 const Rover = (rover, date) => {
     if (rover && date) {
         return `<h1>${rover} photos ${date}</h1>`;   
+    }
+    return '';
+}
+
+const Manifest = (manifest) => {
+    d.log('Manifest');
+    d.table(manifest);
+    if (manifest) {
+        return `<h2>Landing date: ${manifest.get('landing_date')}</h2>
+        <h2>Launch date: ${manifest.get('launch_date')}</h2>
+        <h2>Max date: ${manifest.get('max_date')}</h2>
+        <h3>Status: ${manifest.get('status')}</h3>
+        `;
     }
     return '';
 }
@@ -307,10 +323,30 @@ const getImageOfTheDay = (state) => {
 
 }
 
+const getRoverManifest = (state) => {
+    d.group('getRoverManifest');
+    const {rover} = state;
+    if (rover) {
+        const url = `http://localhost:3000/rover?rover=${store.rover}`
+        fetch(url)
+            .then(res => res.json())
+            .then( json => {
+                const {photo_manifest} = json;
+                if (photo_manifest) {
+                    d.log(`retrieved manifest for ${photo_manifest.name}`);
+                    const manifest = Immutable.Map(photo_manifest);
+                    updateStore(store, {manifest: manifest});
+                }
+            });
+    }
+    d.groupEnd();
+}
+
 const getRoverImages = (state) => {
     d.group('getRoverImages');
     const { rover, date } = state;
-    fetch(`http://localhost:3000/images?rover=${store.rover}&date=${store.date}`)
+    const url = `http://localhost:3000/images?rover=${store.rover}&date=${store.date}`;
+    fetch(url)
         .then(res => res.json())
         .then( json => {
             const {photos} = json;
