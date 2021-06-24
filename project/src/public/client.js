@@ -123,13 +123,13 @@ const App = (state) => {
             </div>
         </form>
         <section>
-            ${Rover(rover, date)}
             ${Manifest(manifest)}
         </section>
 
     <!-- .grid to attach tiles to -->
     <section id="grid">
         ${Images(images)}
+        ${Rover(rover, date)}
     </section>
 
         <footer></footer>
@@ -230,7 +230,7 @@ const RoverTabs = (rovers) => {
 
 const Rover = (rover, date) => {
     if (rover && date) {
-        return `<h1>${rover} photos ${date}</h1>`;   
+        return `<h4>${rover} photos ${date}</h4>`;   
     }
     return '';
 }
