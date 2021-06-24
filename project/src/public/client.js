@@ -115,10 +115,12 @@ const App = (state) => {
             </section>
         </main>
         ${RoverTabs(rovers)}
+        <p>${RoverMessage(rover)}</p>
         <form id="mars">
             <div class="form-container">
                 <p>Date: 
                   ${SelectDate()}
+                  ${SelectDateMessage(date)}
                 </p>
             </div>
         </form>
@@ -206,6 +208,22 @@ const Images = (images) => {
 const SelectDate = () => {
     const defaultDate = store.date ? store.date : new Date().toISOString().split('T')[0];
     return `<input type="date" name='date' id="date" value="${defaultDate}" onchange="getFormData()"></input>`;
+}
+
+const SelectDateMessage = (date) => {
+    if (date) {
+        return ''
+    } else {
+        return 'Pick a date';
+    }
+}
+
+const RoverMessage = (rover) => {
+    if (rover) {
+        return '';
+    } else {
+        return 'Click on a rover';
+    }
 }
 
 const SelectedDate = (selectedDate) => {
