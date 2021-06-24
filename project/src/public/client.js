@@ -110,9 +110,6 @@ const App = (state) => {
             <h1>Mars Rovers Explorer</h1> 
         </header>
         <main>
-            <section>
-                ${ImageOfTheDay(apod)}
-            </section>
         </main>
         ${RoverTabs(rovers)}
         <p>${RoverMessage(rover)}</p>
@@ -132,6 +129,9 @@ const App = (state) => {
     <section id="grid">
         ${Images(images)}
         ${Rover(rover, date)}
+    </section>
+    <section>
+    ${ImageOfTheDay(apod)}
     </section>
 
         <footer></footer>
