@@ -1,8 +1,9 @@
 let store = {
     user: { name: "Student" },
     apod: '',
+    date: false,
     rover: false,
-    images: {},
+    images: [],
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
@@ -80,10 +81,18 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    const { rovers, apod, images, rover, date } = state
 
     d.group('App');
+    
+    d.group('apod');
     d.table(apod);
+    d.groupEnd();
+    
+    d.group('images');
+    d.table(images);
+    d.groupEnd();
+
     d.groupEnd();
 
     return `
@@ -91,12 +100,11 @@ const App = (state) => {
             <h1>Mars Rovers Explorer</h1> 
         </header>
         <main>
-            ${Greeting(store.user.name)}
             <section>
                 ${ImageOfTheDay(apod)}
             </section>
         </main>
-        ${RoverTabs()}
+        ${RoverTabs(rovers)}
         <form id="mars">
             <div class="form-container">
                 <p>Date: 
@@ -105,14 +113,13 @@ const App = (state) => {
             </div>
         </form>
         <section>
-            ${Rover()}
-        </section>
-        <section>
-            ${SelectedDate()}
+            ${Rover(rover, date)}
         </section>
 
     <!-- .grid to attach tiles to -->
-    <main id="grid"></main>
+    <section id="grid">
+        ${Images(images)}
+    </section>
 
         <footer></footer>
     `
@@ -150,13 +157,45 @@ function selectRover(rover) {
     d.groupEnd();
 }
 // ------------------------------------------------------  COMPONENTS
+
+const Images = (images) => {
+    if (images.size > 0) {
+        const shortImages = images.filter((img, index) => index < 9);
+        const _images = shortImages.map((img) => {
+            const {camera, earth_date, img_src, rover, sol} = img;
+            return `<div class="grid-item"><img src="${img_src}"><p>${camera.full_name}</p></div>`;
+        });
+        return _images.join('');
+    } 
+    return '<p>No photos</p>';
+    // sample item in list    
+    // {
+    //     "camera": {
+    //         "full_name": "Front Hazard Avoidance Camera",
+    //         "id": 20,
+    //         "name": "FHAZ",
+    //         "rover_id": 5
+    //     },
+    //     "earth_date": "2021-06-01",
+    //     "id": 840263,
+    //     "img_src": "https://mars.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/03135/opgs/edr/fcam/FLB_675798054EDR_F0880366FHAZ00302M_.JPG",
+    //     "rover": {
+    //         "id": 5,
+    //         "landing_date": "2012-08-06",
+    //         "launch_date": "2011-11-26",
+    //         "name": "Curiosity",
+    //         "status": "active"
+    //     },
+    //     "sol": 3135
+    // },
+}
+
 const SelectDate = () => {
     const defaultDate = store.date ? store.date : new Date().toISOString().split('T')[0];
     return `<input type="date" name='date' id="date" value="${defaultDate}" onchange="getFormData()"></input>`;
 }
 
-const SelectedDate = () => {
-    const selectedDate = store.date;
+const SelectedDate = (selectedDate) => {
     if (selectedDate) {
         const date = new Date(selectedDate);
         const year = date.getFullYear();
@@ -167,8 +206,7 @@ const SelectedDate = () => {
     return '';
 }
 
-const RoverTabs = () => {
-    const rovers = store.rovers;
+const RoverTabs = (rovers) => {
     const selectedRover = store.rover;
     const buttons = rovers.map((rover) => {
         const active = rover == selectRover ? 'active' : '';
@@ -177,10 +215,9 @@ const RoverTabs = () => {
     return buttons.join(' '); 
 }
 
-const Rover = () => {
-    const rover = store.rover;
-    if (rover) {
-        return `<h1>${rover}</h1>`;   
+const Rover = (rover, date) => {
+    if (rover && date) {
+        return `<h1>${rover} photos ${date}</h1>`;   
     }
     return '';
 }
@@ -271,10 +308,18 @@ const getImageOfTheDay = (state) => {
 }
 
 const getRoverImages = (state) => {
-    d.log('getRoverImages');
+    d.group('getRoverImages');
     const { rover, date } = state;
     fetch(`http://localhost:3000/rover?rover=${store.rover}&date=${store.date}`)
         .then(res => res.json())
-        .then( images => updateStore(store, { images }));
+        .then( json => {
+            const {photos} = json;
+            if (photos) {
+                d.log(`there are ${photos.length} photos`);
+                const _photos = Immutable.List(photos);
+                updateStore(store, {images: _photos});
+            }
+        });
+    d.groupEnd();
 }
 

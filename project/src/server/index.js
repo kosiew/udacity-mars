@@ -34,14 +34,16 @@ app.get('/rover', async (req, res) => {
         console.log(`rover = ${rover} date = ${date}`);
         const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${process.env.API_KEY}`;
         console.log(`url = ${url}`);
-        const photos = await fetch(url)
+        const result = await fetch(url)
             .then(res => res.json());
         console.log('sending res for rover');    
         console.group('rover');
-        console.table(photos);
+        const { photos } = result;
+
+        console.log( `there are ${photos.length} photos` );
         console.groupEnd();
 
-        res.send(photos);
+        res.send(result);
     } catch (err) {
         console.log('error:', err);
     }
